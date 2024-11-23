@@ -1,0 +1,88 @@
+columns:
+  vehicle_model: category
+  mileage: integer
+  maintenance_history: category
+  reported_issues: integer
+  vehicle_age: integer
+  fuel_type: category
+  transmission_type: category
+  engine_size: integer
+  odometer_reading: integer
+  last_service_date: date
+  warranty_expiry_date: date
+  owner_type: category
+  insurance_premium: float
+  service_history: integer
+  accident_history: integer
+  fuel_efficiency: float
+  tire_condition: category
+  brake_condition: category
+  battery_status: category
+  need_maintenance: integer
+
+
+numerical_columns:
+  - mileage
+  - reported_issues
+  - vehicle_age
+  - engine_size
+  - odometer_reading
+  - insurance_premium
+  - service_history
+  - accident_history
+  - fuel_efficiency
+  - need_maintenance
+
+categorical_columns:
+  - vehicle_model
+  - maintenance_history
+  - fuel_type
+  - transmission_type
+  - owner_type
+  - tire_condition
+  - brake_condition
+  - battery_status
+
+date_columns:
+  - last_service_date
+  - warranty_expiry_date
+
+target_column:
+  - need_maintenance
+
+domain_value:
+  vehicle_model:
+    - Bus
+    - Car
+    - Motorcycle
+    - SUV
+    - Truck
+    - Van
+  maintenance_history:
+    - Average
+    - Good
+    - Poor
+  fuel_type:
+    - Diesel
+    - Petrol
+    - Electric
+  transmission_type:
+    - Automatic
+    - Manual
+  owner_type:
+    - First
+    - Second
+    - Third
+  tire_condition:
+    - Good
+    - New
+    - Worn Out
+  brake_condition:
+    - Good
+    - New
+    - Worn Out
+  battery_status:
+    - Good
+    - New
+    - Weak
+
