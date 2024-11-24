@@ -1,4 +1,4 @@
-from vmpred.entity.configEntity import DataIngestionConfig, DataValidationConfig
+from vmpred.entity.configEntity import DataIngestionConfig, DataValidationConfig, DataTransformationConfig
 from vmpred.util.util import read_yaml_file
 from vmpred.logger import logging
 import sys
@@ -53,3 +53,25 @@ class Configuration:
         
         except Exception as e:
             raise vmException(e,sys) from e
+        
+    def get_data_transformation_config(self) -> DataTransformationConfig:
+        try:
+            
+            data_transformation_info = self.config_info.get["data_transformation_config"]
+
+            transformed_dir = os.path.join( ROOT_DIR, data_transformation_info["data_dir"], data_transformation_info["transformed_dir"])
+            train_dir = os.path.join( transformed_dir, data_transformation_info["transformed_train_dir"])
+            test_dir = os.path.join( transformed_dir, data_transformation_info["transformed_test_dir"])
+
+            data_transformation_config = DataTransformationConfig(
+                transformed_train_dir=train_dir,
+                transformed_test_dir = test_dir
+            )
+
+            return data_transformation_config
+
+
+        except Exception as e:
+            raise vmException(e,sys) from e
+        
+        

@@ -17,3 +17,19 @@ def read_yaml_file(file_path:str) -> dict:
             return yaml.safe_load(yaml_file)
     except Exception as e:
         raise vmException(e,sys) from e
+    
+def read_parquet(file_path:str) -> pd.DataFrame:
+    """
+    Reads a parquet file and returns the content as a DataFrame
+
+    Args:
+        file_path : str
+
+    Returns:
+        pd.DataFrame: Pandas DataFrame
+    """
+
+    try:
+        return pd.read_parquet(file_path, engine="pyarrow")
+    except Exception as e:
+        raise vmException(e,sys) from e

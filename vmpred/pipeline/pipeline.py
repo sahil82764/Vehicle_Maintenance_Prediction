@@ -1,7 +1,8 @@
-from vmpred.entity.artifactEntity import DataIngestionArtifact, DataValidationArtifact
+from vmpred.entity.artifactEntity import DataIngestionArtifact, DataValidationArtifact, DataTransformationArtifact
 from vmpred.entity.configEntity import DataIngestionConfig
 from vmpred.component.dataIngestion import DataIngestion 
 from vmpred.component.dataValidation import DataValidation
+from vmpred.component.dataTransformation import DataTransformation
 import os
 import sys
 from vmpred.config.configuration import Configuration
@@ -37,8 +38,20 @@ class Pipeline(Thread):
         except Exception as e:
             raise vmException(e,sys) from e
         
-    def start_data_transformation(self,):
-        pass
+    def start_data_transformation(self, DataIngestionArtifact: DataIngestionArtifact, DataValidationArtifact = DataValidationArtifact) -> DataTransformationArtifact:
+        
+        try:
+
+            data_transformation = DataTransformation(
+                dataTransformationConfig=self.config.get_data_transformation_config(),
+                dataIngestionArtifact=DataIngestionArtifact,
+                dataValidationArtifact=DataValidationArtifact
+            )
+
+            return data_transformation.initiate_data_transformation()
+
+        except Exception as e:
+            raise vmException(e,sys) from e
         
     def run_pipeline(self):
         try:

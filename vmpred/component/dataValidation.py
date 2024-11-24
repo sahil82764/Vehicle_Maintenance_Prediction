@@ -132,3 +132,6 @@ class DataValidation:
 
         except Exception as e:
             raise vmException(e,sys) from e
+        
+    def __del__(self):
+        logging.info(f"{'>>'*20}Data Validation Log Completed{'<<'*20}\n\n")
