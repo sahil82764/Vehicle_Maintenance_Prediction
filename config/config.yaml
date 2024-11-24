@@ -8,10 +8,10 @@ data_ingestion_config:
   ingested_dir: ingestedData
 
 data_validation_config:
+  data_dir : data
   schema_dir: config
   schema_file_name: schema.yaml
-  report_file_name: report.json
-  report_page_file_name: report.html
+  validated_dir: validatedData
 
 data_transformation_config:
   add_bedroom_per_room: true

@@ -1,4 +1,4 @@
-from vmpred.entity.configEntity import DataIngestionConfig
+from vmpred.entity.configEntity import DataIngestionConfig, DataValidationConfig
 from vmpred.util.util import read_yaml_file
 from vmpred.logger import logging
 import sys
@@ -32,6 +32,24 @@ class Configuration:
 
             logging.info(f"Data Ingestion Config: {data_ingestion_config}")
             return data_ingestion_config
+        
+        except Exception as e:
+            raise vmException(e,sys) from e
+        
+    def get_data_validation_config(self) -> DataValidationConfig:
+        try:
+            data_validation_info = self.config_info["data_validation_config"]
+
+            schema_file_path = os.path.join( ROOT_DIR, data_validation_info["schema_dir"], data_validation_info["schema_file_name"])
+
+            validated_dir = os.path.join(ROOT_DIR,data_validation_info["data_dir"], data_validation_info["validated_dir"])
+
+            data_validation_config = DataValidationConfig(
+                schema_file_path=schema_file_path,
+                validated_dir = validated_dir
+            )
+
+            return data_validation_config
         
         except Exception as e:
             raise vmException(e,sys) from e

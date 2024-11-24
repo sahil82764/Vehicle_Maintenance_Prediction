@@ -12,8 +12,8 @@ def main():
         config = Configuration()
         pipeline = Pipeline(config = config)
         pipeline.run()
-        print("Testing pipeline.run(dataIngestion) module completed")
-        
+        print("Testing pipeline module completed")
+
     except Exception as e:
         raise vmException(e,sys) from e
 

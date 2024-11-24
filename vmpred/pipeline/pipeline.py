@@ -1,7 +1,7 @@
 from vmpred.entity.artifactEntity import DataIngestionArtifact, DataValidationArtifact
 from vmpred.entity.configEntity import DataIngestionConfig
-from vmpred.component.dataIngestion import DataIngestion, DataValidation
-
+from vmpred.component.dataIngestion import DataIngestion 
+from vmpred.component.dataValidation import DataValidation
 import os
 import sys
 from vmpred.config.configuration import Configuration
@@ -24,12 +24,12 @@ class Pipeline(Thread):
         except Exception as e:
             raise vmException(e,sys) from e
         
-    def start_data_validation(self, data_ingestion_artifact: DataIngestionArtifact ) -> DataValidationArtifact:
+    def start_data_validation(self, DataIngestionArtifact: DataIngestionArtifact ) -> DataValidationArtifact:
         try:
 
             data_validation = DataValidation(
-                data_validation_config=self.config.get_data_validation_config(),
-                data_ingestion_artifact=data_ingestion_artifact
+                dataValidationConfig=self.config.get_data_validation_config(),
+                dataIngestionArtifact=DataIngestionArtifact
             )
 
             return data_validation.initiate_data_validation()
@@ -42,7 +42,9 @@ class Pipeline(Thread):
 
             logging.info("Pipeline Starting.")
 
-            data_ingestion = self.start_data_ingestion()
+            data_ingestion_artifact = self.start_data_ingestion()
+
+            data_validation_artifact = self.start_data_validation(DataIngestionArtifact = data_ingestion_artifact)
 
             logging.info("Pipeline Completed.")
 
