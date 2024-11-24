@@ -30,7 +30,7 @@ class Configuration:
                 ingested_dir = ingested_dir
             )
 
-            logging.info(f"Data Ingestion Config: {data_ingestion_config}")
+            logging.info(f"Data Ingestion Config: {data_ingestion_config} \n")
             return data_ingestion_config
         
         except Exception as e:

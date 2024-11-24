@@ -37,6 +37,9 @@ class Pipeline(Thread):
         except Exception as e:
             raise vmException(e,sys) from e
         
+    def start_data_transformation(self,):
+        pass
+        
     def run_pipeline(self):
         try:
 

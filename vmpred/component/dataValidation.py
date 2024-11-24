@@ -37,7 +37,7 @@ class DataValidation:
                 raise Exception(f"No CSV files found in ingested directory: {ingested_dir}")
 
             # Compile all CSV files into a single DataFrame
-            compiled_df = pd.DataFrame()
+            compiled_df = pd.DataFrame(columns=column_names)
             for file_path in csv_files:
                 try:
                     df = pd.read_csv(file_path)
@@ -65,10 +65,16 @@ class DataValidation:
             if compiled_df.empty:
                 raise Exception("No valid data found after validation. Compilation failed.")
 
-            compiled_csv_path = os.path.join(validated_dir,"validated_data.csv")
-            compiled_df.to_csv(compiled_csv_path,index=False)
-            logging.info(f"Validated and compiled data saved to: {compiled_csv_path}")
-            return compiled_csv_path
+            parquet_file_path = os.path.join(validated_dir, "validated_data.parquet")
+            compiled_df.to_parquet(parquet_file_path, engine="pyarrow")
+
+            # csv_file_path = os.path.join(validated_dir, "validated_data.csv")
+            # compiled_df.to_csv(csv_file_path, index=False)
+
+
+            logging.info(f"Validated and compiled data saved to: {parquet_file_path}")
+            return parquet_file_path
+            # return csv_file_path
 
         except Exception as e:
             raise vmException(e,sys) from e
