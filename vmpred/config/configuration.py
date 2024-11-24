@@ -57,15 +57,19 @@ class Configuration:
     def get_data_transformation_config(self) -> DataTransformationConfig:
         try:
             
-            data_transformation_info = self.config_info.get["data_transformation_config"]
+            data_transformation_info = self.config_info["data_transformation_config"]
 
             transformed_dir = os.path.join( ROOT_DIR, data_transformation_info["data_dir"], data_transformation_info["transformed_dir"])
+            os.makedirs(transformed_dir, exist_ok=True)
+
             train_dir = os.path.join( transformed_dir, data_transformation_info["transformed_train_dir"])
             test_dir = os.path.join( transformed_dir, data_transformation_info["transformed_test_dir"])
 
             data_transformation_config = DataTransformationConfig(
-                transformed_train_dir=train_dir,
-                transformed_test_dir = test_dir
+                transformed_train_dir= train_dir,
+                transformed_test_dir= test_dir, 
+                test_size=data_transformation_info["test_size"],
+                random_state=data_transformation_info["random_state"]
             )
 
             return data_transformation_config

@@ -6,7 +6,11 @@ import sys, os
 import numpy as np
 import pandas as pd
 from vmpred.constant import *
-from vmpred.util.util import read_parquet
+from vmpred.util.util import read_parquet, read_yaml_file
+from datetime import datetime, timedelta
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.model_selection import StratifiedShuffleSplit
 
 # vehicle_model: category
 # mileage: integer
@@ -57,6 +61,136 @@ class DataTransformation:
         except Exception as e:
             raise vmException(e,sys) from e
         
+    def feature_enginnering(self, df: pd.DataFrame) -> pd.DataFrame:
+        try:
+            
+            # 1. Time Since Last Service (in days)
+            df['time_since_last_service'] = (REFERENCE_DATE - df['last_service_date']).dt.days
+
+            # 2. Warranty Duration (in days)
+            df['warranty_duration'] = (df['warranty_expiry_date'] - REFERENCE_DATE).dt.days
+
+            # 3. Season of Last Service [for seasonal pattern]
+            def get_season(date):
+                month = date.month
+                if month in [3, 4, 5]:
+                    return 'spring'
+                elif month in [6, 7, 8]:
+                    return 'summer'
+                elif month in [9, 10, 11]:
+                    return 'fall'
+                else:
+                    return 'winter'
+
+            df['season_last_service'] = df['last_service_date'].apply(get_season)
+
+            # 4. Mileage per Year
+            df['mileage_per_year'] = df['mileage'] / df['vehicle_age']
+
+            # 5. Service Frequency
+            df['service_frequency'] = df['service_history'] / df['vehicle_age']
+
+            # 6. Accident Rate
+            df['accident_rate'] = df['accident_history'] / df['vehicle_age']
+
+            # 7. Ordinal Encoding of Maintenance History
+            maintenance_mapping = {'Poor': 1, 'Average': 2, 'Good': 3}
+            df['maintenance_history'] = df['maintenance_history'].map(maintenance_mapping)
+
+            # 8. Ordinal Encoding of Tire and Brake Condition
+            condition_mapping = {'Worn Out': 1, 'Good': 2, 'New': 3}
+            df['tire_condition'] = df['tire_condition'].map(condition_mapping)
+            df['brake_condition'] = df['brake_condition'].map(condition_mapping)
+
+            # 9. Ordinal Encoding of Battery Condition
+            status_mapping = {'Weak': 1, 'Good': 2, 'New': 3}
+            df['battery_status'] = df['battery_status'].map(status_mapping)
+
+            return df
+
+        except Exception as e:
+            raise vmException(e,sys) from e
+        
+    def seperate_and_scale(self, df: pd.DataFrame, file_path: str):
+        try:
+            schema = read_yaml_file(file_path=file_path)
+            
+            TARGET_VARIABLE = schema['target_column'][0]
+            
+            y = df[TARGET_VARIABLE]
+            X = df.drop(TARGET_VARIABLE, axis=1)
+
+            # Identify numerical and categorical features
+            numerical_cols = X.select_dtypes(include=np.number).columns
+            categorical_cols = X.select_dtypes(include=['category']).columns
+
+            # Create a column transformer
+            preprocessor = ColumnTransformer(
+                transformers=[
+                    ('num', StandardScaler(), numerical_cols),
+                    ('cat', OneHotEncoder(handle_unknown='ignore', sparse_output=False), categorical_cols)
+                ])
+            
+            # Apply transformations
+            X_processed = preprocessor.fit_transform(X)
+            
+            #Get feature names for OneHotEncoder
+            encoded_feature_names = list(preprocessor.named_transformers_['cat'].get_feature_names_out(categorical_cols))
+
+            #Combine feature names
+            feature_names = list(numerical_cols) + encoded_feature_names
+
+            #Create DataFrame with preserved column names
+            X_processed = pd.DataFrame(X_processed, columns=feature_names)
+
+            # Recombine features and target
+            X_processed[TARGET_VARIABLE] = y
+            return X_processed, TARGET_VARIABLE
+
+
+        except Exception as e:
+            raise vmException(e,sys) from e
+        
+    def split_data_train_test(self, df: pd.DataFrame, TARGET_VARIABLE) -> DataTransformationArtifact:
+
+        try:
+            train_dir = self.data_transformation_config.transformed_train_dir
+            test_dir = self.data_transformation_config.transformed_test_dir
+
+            os.makedirs(train_dir, exist_ok=True)
+            os.makedirs(test_dir, exist_ok=True)
+
+            testSize = self.data_transformation_config.test_size
+            randomState = self.data_transformation_config.random_state
+
+            logging.info("Splitting Data into Train and Test")
+
+            split = StratifiedShuffleSplit(n_splits=1, test_size=testSize, random_state=randomState)
+
+            for train_index, test_index in split.split(df, df[TARGET_VARIABLE]):
+                strat_train_set = df.iloc[train_index]
+                strat_test_set = df.iloc[test_index]
+
+            logging.info(f"Exporting training dataset to file: [{train_dir}]")
+            parquet_file_train_path = os.path.join(train_dir, "train_data.parquet")
+            strat_train_set.to_parquet(parquet_file_train_path, engine="pyarrow")
+
+            logging.info(f"Exporting testing dataset to file: [{test_dir}]")
+            parquet_file_test_path = os.path.join(test_dir, "test_data.parquet")
+            strat_test_set.to_parquet(parquet_file_test_path, engine="pyarrow")
+
+            data_transformation_artifact = DataTransformationArtifact(
+                transformed_train_file_path=train_dir,
+                transformed_test_file_path=test_dir,
+                is_transformed=True,
+                message="Data Transformation completed successfully"
+            )
+            return data_transformation_artifact
+  
+
+        except Exception as e:
+            raise vmException(e,sys) from e
+        
 
     def initiate_data_transformation(self) -> DataTransformationArtifact:
         
@@ -67,6 +201,8 @@ class DataTransformation:
             vmData = self.handle_missing_values(vmData)
             vmData = self.drop_duplicates(vmData)
             vmData = self.feature_enginnering(vmData)
+            vmData, TARGET_VARIABLE = self.seperate_and_scale(vmData, self.data_validation_artifact.schema_file_path)
+            return self.split_data_train_test(vmData, TARGET_VARIABLE)
 
         except Exception as e:
             raise vmException(e,sys) from e

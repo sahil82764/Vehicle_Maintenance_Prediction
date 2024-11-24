@@ -18,6 +18,8 @@ data_transformation_config:
   transformed_dir: transformedData
   transformed_train_dir: trainData
   transformed_test_dir: testData
+  test_size: 0.25
+  random_state: 42
   
 model_trainer_config:
   trained_model_dir: trained_model

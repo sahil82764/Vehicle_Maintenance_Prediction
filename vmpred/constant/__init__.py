@@ -14,3 +14,4 @@ CONFIG_FILE_PATH = os.path.join(ROOT_DIR,CONFIG_DIR,CONFIG_FILE_NAME)
 
 
 CURRENT_TIME_STAMP = get_current_time_stamp()
+REFERENCE_DATE = datetime(2024, 4, 1)

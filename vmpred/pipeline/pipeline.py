@@ -62,6 +62,11 @@ class Pipeline(Thread):
 
             data_validation_artifact = self.start_data_validation(DataIngestionArtifact = data_ingestion_artifact)
 
+            data_transformation_artifact = self.start_data_transformation(
+                DataIngestionArtifact=data_ingestion_artifact,
+                DataValidationArtifact=data_validation_artifact
+            )
+
             logging.info("Pipeline Completed.")
 
         except Exception as e:
