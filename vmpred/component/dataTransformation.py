@@ -70,39 +70,25 @@ class DataTransformation:
             # 2. Warranty Duration (in days)
             df['warranty_duration'] = (df['warranty_expiry_date'] - REFERENCE_DATE).dt.days
 
-            # 3. Season of Last Service [for seasonal pattern]
-            def get_season(date):
-                month = date.month
-                if month in [3, 4, 5]:
-                    return 'spring'
-                elif month in [6, 7, 8]:
-                    return 'summer'
-                elif month in [9, 10, 11]:
-                    return 'fall'
-                else:
-                    return 'winter'
-
-            df['season_last_service'] = df['last_service_date'].apply(get_season)
-
-            # 4. Mileage per Year
+            # 3. Mileage per Year
             df['mileage_per_year'] = df['mileage'] / df['vehicle_age']
 
-            # 5. Service Frequency
+            # 4. Service Frequency
             df['service_frequency'] = df['service_history'] / df['vehicle_age']
 
-            # 6. Accident Rate
+            # 5. Accident Rate
             df['accident_rate'] = df['accident_history'] / df['vehicle_age']
 
-            # 7. Ordinal Encoding of Maintenance History
+            # 6. Ordinal Encoding of Maintenance History
             maintenance_mapping = {'Poor': 1, 'Average': 2, 'Good': 3}
             df['maintenance_history'] = df['maintenance_history'].map(maintenance_mapping)
 
-            # 8. Ordinal Encoding of Tire and Brake Condition
+            # 7. Ordinal Encoding of Tire and Brake Condition
             condition_mapping = {'Worn Out': 1, 'Good': 2, 'New': 3}
             df['tire_condition'] = df['tire_condition'].map(condition_mapping)
             df['brake_condition'] = df['brake_condition'].map(condition_mapping)
 
-            # 9. Ordinal Encoding of Battery Condition
+            # 8. Ordinal Encoding of Battery Condition
             status_mapping = {'Weak': 1, 'Good': 2, 'New': 3}
             df['battery_status'] = df['battery_status'].map(status_mapping)
 
