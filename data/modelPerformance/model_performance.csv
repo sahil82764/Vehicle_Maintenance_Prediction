@@ -1,0 +1,6 @@
+model_name,best_params,accuracy,confusion_matrix,precision,recall,f1_score
+sklearn.linear_model.LogisticRegression,"{'C': 10, 'solver': 'liblinear'}",0.9501866666666666,"[[1548, 227], [240, 7360]]",0.9503313079095321,0.9501866666666666,0.9502562214091119
+sklearn.ensemble.RandomForestClassifier,"{'max_depth': 20, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 50}",1.0,"[[1775, 0], [0, 7600]]",1.0,1.0,1.0
+sklearn.svm.SVC,"{'C': 10, 'gamma': 'auto', 'kernel': 'rbf'}",0.9869866666666667,"[[1721, 54], [68, 7532]]",0.9870327982503933,0.9869866666666667,0.9870062274559399
+sklearn.ensemble.GradientBoostingClassifier,"{'learning_rate': 0.01, 'max_depth': 7, 'n_estimators': 50, 'subsample': 0.8}",1.0,"[[1775, 0], [0, 7600]]",1.0,1.0,1.0
+xgboost.XGBClassifier,"{'learning_rate': 0.01, 'max_depth': 7, 'n_estimators': 50, 'objective': 'binary:logistic', 'subsample': 0.8}",1.0,"[[1775, 0], [0, 7600]]",1.0,1.0,1.0

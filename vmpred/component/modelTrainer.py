@@ -46,7 +46,7 @@ class ModelTrainer:
             raise vmException(e,sys) from e
         
 
-    def train_model(self, X_train, y_train, X_test, y_test, model_config_path: str) -> ModelTrainerArtifact:
+    def train_model(self, X_train, X_test, y_train, y_test, model_config_path: str) -> ModelTrainerArtifact:
         try:
             
             model_configs = read_yaml_file(file_path=model_config_path)
@@ -68,8 +68,9 @@ class ModelTrainer:
                     module = importlib.import_module(module_name)
                     model_class = getattr(module, class_name)
                     model = model_class()
+                    logging.info(f'Training Model:{class_name}')
 
-                    grid_search = GridSearchCV(model, hyperparameters, cv=crossValidation, scoring='accuracy', verbose=1)
+                    grid_search = GridSearchCV(model, hyperparameters, cv=crossValidation, scoring='accuracy', n_jobs=-1, error_score='raise', verbose=1)
                     grid_search.fit(X_train, y_train)
 
                     best_model_current = grid_search.best_estimator_
@@ -88,6 +89,14 @@ class ModelTrainer:
                         'recall': class_report['weighted avg']['recall'],
                         'f1_score': class_report['weighted avg']['f1-score']
                     })
+                    logging.info(f"""Training Model Result: 
+                                'model_name': {model_name},
+                                'best_params': {grid_search.best_params_},
+                                'accuracy': {accuracy},
+                                'confusion_matrix': {conf_matrix.tolist()},
+                                'precision': {class_report['weighted avg']['precision']},
+                                'recall': {class_report['weighted avg']['recall']},
+                                'f1_score': {class_report['weighted avg']['f1-score']}""")
 
                     if accuracy > base_accuracy:
                         base_accuracy = accuracy
@@ -135,10 +144,10 @@ class ModelTrainer:
 
             modelsConfigurationInfo = self.model_trainer_config.model_config_file_path
 
-            trainData, trainLabel, testData, testLabel = self.split_data(processedData, self.data_validation_artifact.schema_file_path)
+            X_train, X_test, y_train, y_test = self.split_data(processedData, self.data_validation_artifact.schema_file_path)
 
 
-            return self.train_model(trainData, trainLabel, testData, testLabel, modelsConfigurationInfo)
+            return self.train_model(X_train, X_test, y_train, y_test, modelsConfigurationInfo)
 
         except Exception as e:
             raise vmException(e,sys) from e
