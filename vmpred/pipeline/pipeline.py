@@ -54,10 +54,11 @@ class Pipeline(Thread):
         except Exception as e:
             raise vmException(e,sys) from e
         
-    def start_model_training(self, DataTransformationArtifact: DataTransformationArtifact) -> ModelTrainerArtifact:
+    def start_model_training(self, DataTransformationArtifact: DataTransformationArtifact, DataValidationArtifact: DataValidationArtifact) -> ModelTrainerArtifact:
         try:
             model_trainer = ModelTrainer(modelTrainerConfig=self.config.get_model_trainer_config(),
-                                         dataTransformationArtifact=DataTransformationArtifact
+                                         dataTransformationArtifact=DataTransformationArtifact,
+                                         dataValidationArtifact=DataValidationArtifact
                                          )
             return model_trainer.initiate_model_trainer()
         except Exception as e:
@@ -74,6 +75,11 @@ class Pipeline(Thread):
 
             data_transformation_artifact = self.start_data_transformation(
                 DataIngestionArtifact=data_ingestion_artifact,
+                DataValidationArtifact=data_validation_artifact
+            )
+
+            model_trainer_artifact = self.start_model_training(
+                DataTransformationArtifact=data_transformation_artifact,
                 DataValidationArtifact=data_validation_artifact
             )
 

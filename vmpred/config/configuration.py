@@ -83,14 +83,20 @@ class Configuration:
             model_trainer_info = self.config_info["model_trainer_config"]
             
             trained_model_dir = os.path.join(ROOT_DIR, model_trainer_info["model_dir"], model_trainer_info["trained_model_dir"])
-            os.makedirs(trained_model_dir)
+            os.makedirs(trained_model_dir, exist_ok=True)
 
             model_config_file_path = os.path.join(ROOT_DIR, model_trainer_info["model_config_dir"], model_trainer_info["model_config_file_name"])
+
+            model_performance_dir = os.path.join(ROOT_DIR, model_trainer_info["data_dir"], model_trainer_info["model_performance_dir"])
+            os.makedirs(model_performance_dir, exist_ok=True)
 
             model_trainer_config = ModelTrainerConfig(
                 trained_model_dir=trained_model_dir,
                 base_accuracy=model_trainer_info["base_accuracy"],
-                model_config_file_path=model_config_file_path
+                model_config_file_path=model_config_file_path,
+                test_size=model_trainer_info["test_size"],
+                random_state=model_trainer_info["random_state"],
+                model_performance_dir=model_performance_dir
             )
 
             return model_trainer_config

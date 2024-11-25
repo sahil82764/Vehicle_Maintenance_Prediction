@@ -171,6 +171,7 @@ class DataTransformation:
                 is_transformed=True,
                 message="Data Transformation completed successfully"
             )
+            logging.info(f"Data transformation artifact: {data_transformation_artifact}")
             return data_transformation_artifact
   
 
