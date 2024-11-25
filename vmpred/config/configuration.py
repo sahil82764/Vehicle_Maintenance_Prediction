@@ -1,4 +1,4 @@
-from vmpred.entity.configEntity import DataIngestionConfig, DataValidationConfig, DataTransformationConfig
+from vmpred.entity.configEntity import DataIngestionConfig, DataValidationConfig, DataTransformationConfig, ModelTrainerConfig
 from vmpred.util.util import read_yaml_file
 from vmpred.logger import logging
 import sys
@@ -73,9 +73,32 @@ class Configuration:
             )
 
             return data_transformation_config
+        
+        except Exception as e:
+            raise vmException(e,sys) from e
+        
+    def get_model_trainer_config(self) -> ModelTrainerConfig:
+        
+        try:
+            model_trainer_info = self.config_info["model_trainer_config"]
+            
+            trained_model_dir = os.path.join(ROOT_DIR, model_trainer_info["model_dir"], model_trainer_info["trained_model_dir"])
+            os.makedirs(trained_model_dir)
 
+            model_config_file_path = os.path.join(ROOT_DIR, model_trainer_info["model_config_dir"], model_trainer_info["model_config_file_name"])
+
+            model_trainer_config = ModelTrainerConfig(
+                trained_model_dir=trained_model_dir,
+                base_accuracy=model_trainer_info["base_accuracy"],
+                model_config_file_path=model_config_file_path
+            )
+
+            return model_trainer_config
 
         except Exception as e:
             raise vmException(e,sys) from e
+
+
+        
         
         

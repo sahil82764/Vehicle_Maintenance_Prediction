@@ -1,0 +1,35 @@
+cross_validation: 5 
+
+models:
+  - model_name: sklearn.linear_model.LogisticRegression
+    hyperparameters:
+      C: [0.1, 1, 10]
+      solver: ['liblinear', 'saga']
+
+  - model_name: sklearn.ensemble.RandomForestClassifier
+    hyperparameters:
+      n_estimators: [50, 100, 200]
+      max_depth: [None, 10, 20]
+      min_samples_split: [2, 5, 10]
+      min_samples_leaf: [1, 2, 4]
+
+  - model_name: sklearn.svm.SVC
+    hyperparameters:
+      C: [0.1, 1, 10]
+      kernel: ['linear', 'rbf']
+      gamma: ['scale', 'auto']
+
+  - model_name: sklearn.ensemble.GradientBoostingClassifier
+    hyperparameters:
+      n_estimators: [50, 100, 200]
+      learning_rate: [0.01, 0.1, 0.5]
+      max_depth: [3, 5, 7]
+      subsample: [0.8, 1.0]
+
+  - model_name: xgboost.XGBClassifier
+    hyperparameters:
+      n_estimators: [50, 100, 200]
+      learning_rate: [0.01, 0.1, 0.5]
+      max_depth: [3, 5, 7]
+      subsample: [0.8, 1.0]
+      objective: ['binary:logistic']
