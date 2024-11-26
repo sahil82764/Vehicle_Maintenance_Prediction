@@ -48,3 +48,13 @@ def save_object(file_path:str, obj):
 
     except Exception as e:
         raise vmException(e,sys) from e
+    
+def load_object(file_path:str):
+    """
+    file_path: str
+    """
+    try:
+        with open(file_path,'rb') as file_obj:
+            return pickle.load(file_obj)
+    except Exception as e:
+        raise vmException(e,sys) from e

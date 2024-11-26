@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.model_selection import StratifiedShuffleSplit
+import joblib
 
 # vehicle_model: category
 # mileage: integer
@@ -49,7 +50,7 @@ class DataTransformation:
         
     def handle_missing_values(self, df: pd.DataFrame):
         try:
-            logging.info(f"{df.isnull().sum()}")
+            logging.info(f"""Missing Values: \n {df.isnull().sum()}""")
             return df.dropna()
         except Exception as e:
             raise vmException(e,sys) from e
@@ -92,6 +93,8 @@ class DataTransformation:
             status_mapping = {'Weak': 1, 'Good': 2, 'New': 3}
             df['battery_status'] = df['battery_status'].map(status_mapping)
 
+            logging.info(f"New Features Added: \n {df.info()}")
+
             return df
 
         except Exception as e:
@@ -131,6 +134,14 @@ class DataTransformation:
 
             # Recombine features and target
             X_processed[TARGET_VARIABLE] = y
+
+            self.preprocessor_path = os.path.join(self.data_transformation_config.preprocessor_dir,"preprocessor.pkl")
+            joblib.dump(preprocessor, self.preprocessor_path)  # Save the preprocessor
+            logging.info(f"Preprocessor saved to: {self.preprocessor_path}")
+
+            logging.info("Feature Scaling [Numerical Cols] and One-Hot Encoding [Categorical Columns] Completed")
+            logging.info(f"Dimension of Processed Data: {X_processed.shape}")
+
             return X_processed, TARGET_VARIABLE
 
 
@@ -142,9 +153,6 @@ class DataTransformation:
         try:
             train_dir = self.data_transformation_config.transformed_train_dir
             test_dir = self.data_transformation_config.transformed_test_dir
-
-            os.makedirs(train_dir, exist_ok=True)
-            os.makedirs(test_dir, exist_ok=True)
 
             testSize = self.data_transformation_config.test_size
             randomState = self.data_transformation_config.random_state
@@ -166,10 +174,11 @@ class DataTransformation:
             strat_test_set.to_parquet(parquet_file_test_path, engine="pyarrow")
 
             data_transformation_artifact = DataTransformationArtifact(
-                transformed_train_file_path=train_dir,
-                transformed_test_file_path=test_dir,
+                transformed_train_file_path=parquet_file_train_path,
+                transformed_test_file_path=parquet_file_test_path,
                 is_transformed=True,
-                message="Data Transformation completed successfully"
+                message="Data Transformation completed successfully",
+                preprocessor_file_path=self.preprocessor_path
             )
             logging.info(f"Data transformation artifact: {data_transformation_artifact}")
             return data_transformation_artifact

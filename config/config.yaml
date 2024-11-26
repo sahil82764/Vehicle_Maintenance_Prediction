@@ -18,7 +18,8 @@ data_transformation_config:
   transformed_dir: transformedData
   transformed_train_dir: trainData
   transformed_test_dir: testData
-  test_size: 0.25
+  preprocessor_dir: preprocessorObject
+  test_size: 0.3
   random_state: 42
   
 model_trainer_config:
@@ -30,12 +31,16 @@ model_trainer_config:
   base_accuracy: 0.6
   model_config_dir: config
   model_config_file_name: model.yaml
-  test_size: 0.25
+  test_size: 0.3
   random_state: 42
 
 
-model_evaluation_config:
+model_evaluator_config:
   model_evaluation_file_name: model_evaluation.yaml
+  model_config_dir: config
+  model_config_file_name: model.yaml
+  model_dir: model
+  evaluated_model_file_path: bestEvaluatedModel
   
 
 model_pusher_config:

@@ -1,4 +1,4 @@
-from vmpred.entity.configEntity import DataIngestionConfig, DataValidationConfig, DataTransformationConfig, ModelTrainerConfig
+from vmpred.entity.configEntity import DataIngestionConfig, DataValidationConfig, DataTransformationConfig, ModelTrainerConfig, ModelEvaluatorConfig
 from vmpred.util.util import read_yaml_file
 from vmpred.logger import logging
 import sys
@@ -63,13 +63,19 @@ class Configuration:
             os.makedirs(transformed_dir, exist_ok=True)
 
             train_dir = os.path.join( transformed_dir, data_transformation_info["transformed_train_dir"])
+            os.makedirs(train_dir, exist_ok=True)
             test_dir = os.path.join( transformed_dir, data_transformation_info["transformed_test_dir"])
+            os.makedirs(test_dir, exist_ok=True)
+
+            preprocessor_dir = os.path.join(transformed_dir, data_transformation_info["preprocessor_dir"])
+            os.makedirs(preprocessor_dir, exist_ok=True)
 
             data_transformation_config = DataTransformationConfig(
                 transformed_train_dir= train_dir,
                 transformed_test_dir= test_dir, 
                 test_size=data_transformation_info["test_size"],
-                random_state=data_transformation_info["random_state"]
+                random_state=data_transformation_info["random_state"],
+                preprocessor_dir=preprocessor_dir
             )
 
             return data_transformation_config
@@ -100,9 +106,32 @@ class Configuration:
             )
 
             return model_trainer_config
-
+        
         except Exception as e:
             raise vmException(e,sys) from e
+        
+    def get_model_evaluator_config(self) -> ModelEvaluatorConfig:
+        
+        try:
+            model_evaluator_info = self.config_info["model_evaluator_config"]
+            
+            evaluated_model_dir = os.path.join(ROOT_DIR, model_evaluator_info["model_dir"], model_evaluator_info["evaluated_model_file_path"])
+            os.makedirs(evaluated_model_dir, exist_ok=True)
+
+            model_config_file_path = os.path.join(ROOT_DIR, model_evaluator_info["model_config_dir"], model_evaluator_info["model_config_file_name"])
+
+
+            model_evaluator_config = ModelEvaluatorConfig(
+                        model_evaluation_file_path=evaluated_model_dir,
+                        model_config_file_path=model_config_file_path
+            )
+
+            return model_evaluator_config
+        
+        except Exception as e:
+            raise vmException(e,sys) from e
+
+        
 
 
         

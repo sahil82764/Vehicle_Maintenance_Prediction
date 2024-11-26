@@ -1,9 +1,10 @@
-from vmpred.entity.artifactEntity import DataIngestionArtifact, DataValidationArtifact, DataTransformationArtifact, ModelTrainerArtifact
+from vmpred.entity.artifactEntity import DataIngestionArtifact, DataValidationArtifact, DataTransformationArtifact, ModelTrainerArtifact, ModelEvaluatorArtifact
 from vmpred.entity.configEntity import DataIngestionConfig
 from vmpred.component.dataIngestion import DataIngestion 
 from vmpred.component.dataValidation import DataValidation
 from vmpred.component.dataTransformation import DataTransformation
 from vmpred.component.modelTrainer import ModelTrainer
+from vmpred.component.modelEvalutor import ModelEvaluator
 import os
 import sys
 from vmpred.config.configuration import Configuration
@@ -64,6 +65,16 @@ class Pipeline(Thread):
         except Exception as e:
             raise vmException(e, sys) from e
         
+    def start_model_evaluation(self, ModelTrainerArtifact: ModelTrainerArtifact) -> ModelEvaluatorArtifact:
+        try:
+            model_evaluator = ModelEvaluator(modelEvaluatorConfig=self.config.get_model_evaluator_config(),
+                                            dataTransformationArtifact=DataTransformationArtifact,
+                                            modelTrainerArtifact=ModelTrainerArtifact 
+                                         )
+            return model_evaluator.initiate_model_evaluator()
+        except Exception as e:
+            raise vmException(e, sys) from e
+        
     def run_pipeline(self):
         try:
 
@@ -81,6 +92,10 @@ class Pipeline(Thread):
             model_trainer_artifact = self.start_model_training(
                 DataTransformationArtifact=data_transformation_artifact,
                 DataValidationArtifact=data_validation_artifact
+            )
+
+            model_evaluator_artifact = self.start_model_evaluation(
+                ModelTrainerArtifact = model_trainer_artifact
             )
 
             logging.info("Pipeline Completed.")
