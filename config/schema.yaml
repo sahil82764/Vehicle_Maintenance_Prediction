@@ -30,7 +30,6 @@ numerical_columns:
   - insurance_premium
   - service_history
   - accident_history
-  - fuel_efficiency
   - need_maintenance
 
 categorical_columns:
@@ -49,6 +48,7 @@ date_columns:
 
 target_column:
   - need_maintenance
+  - fuel_efficiency
 
 domain_value:
   vehicle_model:

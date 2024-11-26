@@ -94,9 +94,9 @@ class Pipeline(Thread):
                 DataValidationArtifact=data_validation_artifact
             )
 
-            model_evaluator_artifact = self.start_model_evaluation(
-                ModelTrainerArtifact = model_trainer_artifact
-            )
+            # model_evaluator_artifact = self.start_model_evaluation(
+            #     ModelTrainerArtifact = model_trainer_artifact
+            # )
 
             logging.info("Pipeline Completed.")
 

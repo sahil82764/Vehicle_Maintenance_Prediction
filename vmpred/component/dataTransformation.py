@@ -101,13 +101,10 @@ class DataTransformation:
             raise vmException(e,sys) from e
         
     def seperate_and_scale(self, df: pd.DataFrame, file_path: str):
-        try:
-            schema = read_yaml_file(file_path=file_path)
+        try:            
             
-            TARGET_VARIABLE = schema['target_column'][0]
-            
-            y = df[TARGET_VARIABLE]
-            X = df.drop(TARGET_VARIABLE, axis=1)
+            y = df[[TARGET_VARIABLE[0],TARGET_VARIABLE[1]]]
+            X = df.drop(columns=TARGET_VARIABLE, axis=1)
 
             # Identify numerical and categorical features
             numerical_cols = X.select_dtypes(include=np.number).columns
@@ -142,13 +139,13 @@ class DataTransformation:
             logging.info("Feature Scaling [Numerical Cols] and One-Hot Encoding [Categorical Columns] Completed")
             logging.info(f"Dimension of Processed Data: {X_processed.shape}")
 
-            return X_processed, TARGET_VARIABLE
+            return X_processed
 
 
         except Exception as e:
             raise vmException(e,sys) from e
         
-    def split_data_train_test(self, df: pd.DataFrame, TARGET_VARIABLE) -> DataTransformationArtifact:
+    def split_data_train_test(self, df: pd.DataFrame) -> DataTransformationArtifact:
 
         try:
             train_dir = self.data_transformation_config.transformed_train_dir
@@ -161,7 +158,7 @@ class DataTransformation:
 
             split = StratifiedShuffleSplit(n_splits=1, test_size=testSize, random_state=randomState)
 
-            for train_index, test_index in split.split(df, df[TARGET_VARIABLE]):
+            for train_index, test_index in split.split(df, df[TARGET_VARIABLE[0]]):
                 strat_train_set = df.iloc[train_index]
                 strat_test_set = df.iloc[test_index]
 
@@ -197,8 +194,8 @@ class DataTransformation:
             vmData = self.handle_missing_values(vmData)
             vmData = self.drop_duplicates(vmData)
             vmData = self.feature_enginnering(vmData)
-            vmData, TARGET_VARIABLE = self.seperate_and_scale(vmData, self.data_validation_artifact.schema_file_path)
-            return self.split_data_train_test(vmData, TARGET_VARIABLE)
+            vmData = self.seperate_and_scale(vmData, self.data_validation_artifact.schema_file_path)
+            return self.split_data_train_test(vmData)
 
         except Exception as e:
             raise vmException(e,sys) from e

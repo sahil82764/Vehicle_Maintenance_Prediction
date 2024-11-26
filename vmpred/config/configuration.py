@@ -91,18 +91,22 @@ class Configuration:
             trained_model_dir = os.path.join(ROOT_DIR, model_trainer_info["model_dir"], model_trainer_info["trained_model_dir"])
             os.makedirs(trained_model_dir, exist_ok=True)
 
-            model_config_file_path = os.path.join(ROOT_DIR, model_trainer_info["model_config_dir"], model_trainer_info["model_config_file_name"])
+            modelc_config_file_path = os.path.join(ROOT_DIR, model_trainer_info["model_config_dir"], model_trainer_info["modelc_config_file_name"]) # Classification
+            modelr_config_file_path = os.path.join(ROOT_DIR, model_trainer_info["model_config_dir"], model_trainer_info["modelr_config_file_name"]) # Regression
 
-            model_performance_dir = os.path.join(ROOT_DIR, model_trainer_info["data_dir"], model_trainer_info["model_performance_dir"])
-            os.makedirs(model_performance_dir, exist_ok=True)
+            modelc_performance_dir = os.path.join(ROOT_DIR, model_trainer_info["data_dir"], model_trainer_info["modelc_performance_dir"]) # Classification
+            os.makedirs(modelc_performance_dir, exist_ok=True)
+            modelr_performance_dir = os.path.join(ROOT_DIR, model_trainer_info["data_dir"], model_trainer_info["modelr_performance_dir"]) # Regression
+            os.makedirs(modelr_performance_dir, exist_ok=True)
 
             model_trainer_config = ModelTrainerConfig(
                 trained_model_dir=trained_model_dir,
-                base_accuracy=model_trainer_info["base_accuracy"],
-                model_config_file_path=model_config_file_path,
+                modelc_config_file_path=modelc_config_file_path,
+                modelr_config_file_path=modelr_config_file_path,
                 test_size=model_trainer_info["test_size"],
                 random_state=model_trainer_info["random_state"],
-                model_performance_dir=model_performance_dir
+                modelc_performance_dir=modelc_performance_dir,
+                modelr_performance_dir=modelr_performance_dir
             )
 
             return model_trainer_config
