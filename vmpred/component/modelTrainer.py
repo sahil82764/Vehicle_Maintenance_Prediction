@@ -53,11 +53,6 @@ class ModelTrainer:
             cross_validation = model_configs.get('cross_validation')
             results = []
 
-            # Apply PCA before training
-            pca = PCA(n_components=4)
-            X_train_pca = pca.fit_transform(X_train)
-            X_test_pca = pca.transform(X_test)
-
             for model_config in model_configs['models']:
                 model_name = model_config['model_name']
                 hyperparameters = model_config['hyperparameters']
@@ -72,7 +67,7 @@ class ModelTrainer:
                     grid_search = GridSearchCV(model, hyperparameters, cv=cross_validation, scoring='neg_mean_squared_error', n_jobs=-1, verbose=1)
 
                     start_time = time.time()
-                    grid_search.fit(X_train_pca, y_train)
+                    grid_search.fit(X_train, y_train)
                     end_time = time.time()
                     training_time = end_time - start_time
 
@@ -80,12 +75,12 @@ class ModelTrainer:
 
                     #Cross-validation using KFold (better for regression)
                     kf = KFold(n_splits=cross_validation, shuffle=True, random_state=42)
-                    cv_scores = cross_val_score(model_current, X_train_pca, y_train, cv=kf, scoring='neg_mean_squared_error')
+                    cv_scores = cross_val_score(model_current, X_train, y_train, cv=kf, scoring='neg_mean_squared_error')
                     cv_rmse_scores = np.sqrt(-cv_scores)  #RMSE
 
 
                     start_time_pred = time.time()
-                    y_pred = model_current.predict(X_test_pca)
+                    y_pred = model_current.predict(X_test)
                     end_time_pred = time.time()
                     prediction_time = end_time_pred - start_time_pred
 

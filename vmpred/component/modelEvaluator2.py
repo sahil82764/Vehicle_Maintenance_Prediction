@@ -73,8 +73,8 @@ class ModelEvaluator:
 
             # Save best model to the evaluated_file_path
             best_model_path_eval = os.path.join(self.modelEvaluationConfig.model_evaluation_file_path, f'{best_model_name}.pkl')
-            os.makedirs(os.path.dirname(self.modelEvaluationConfig.model_evaluation_file_path), exist_ok=True)
-            save_object(best_model_path_eval, best_model_path_eval)
+            os.makedirs(os.path.dirname(best_model_path_eval), exist_ok=True)
+            save_object(best_model_path_eval, best_model)
 
 
             model_evaluation_artifact = ModelEvaluatorArtifact(

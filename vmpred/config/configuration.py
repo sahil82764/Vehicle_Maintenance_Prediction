@@ -127,7 +127,7 @@ class Configuration:
 
             model_evaluator_config = ModelEvaluatorConfig(
                         model_evaluation_file_path=evaluated_model_dir,
-                        model_config_file_path=model_config_file_path
+                        model_config_file_path=model_config_file_path,
             )
 
             return model_evaluator_config

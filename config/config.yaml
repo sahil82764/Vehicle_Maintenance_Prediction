@@ -38,7 +38,7 @@ model_trainer_config:
 model_evaluator_config:
   model_evaluation_file_name: model_evaluation.yaml
   model_config_dir: config
-  model_config_file_name: model.yaml
+  model_config_file_name: modelE.yaml
   model_dir: model
   evaluated_model_file_path: bestEvaluatedModel
   
