@@ -178,6 +178,8 @@ class ModelTrainer:
                     conf_matrix = confusion_matrix(y_test, y_pred)
                     class_report = classification_report(y_test, y_pred, output_dict=True)
                     logloss = log_loss(y_test, y_proba)
+                    # Extract TP, TN, FP, FN from confusion matrix
+                    tn, fp, fn, tp = conf_matrix.ravel()
 
 
                     try: # Use try-except block for roc_auc_score
@@ -194,7 +196,10 @@ class ModelTrainer:
                     'cross_val_std': cv_scores.std(),
                     'roc_auc': roc_auc,
                     'log_loss': logloss,
-                    'confusion_matrix': conf_matrix.tolist(),
+                    'tp': tp,  # True Positive
+                    'tn': tn,  # True Negative
+                    'fp': fp,  # False Positive
+                    'fn': fn,
                     'precision': class_report['weighted avg']['precision'],
                     'recall': class_report['weighted avg']['recall'],
                     'f1_score': class_report['weighted avg']['f1-score'],

@@ -3,32 +3,32 @@ cross_validation: 5
 models:
   - model_name: sklearn.linear_model.LinearRegression
     hyperparameters:
-      fit_intercept: [True] #Reduced to only one value.
-      positive: [False] #Reduced to only one value.
+      fit_intercept: [True] 
+      positive: [False] 
 
   - model_name: sklearn.linear_model.Ridge
     hyperparameters:
-      alpha: [1.0, 10.0] #Reduced the range and number of values
-      solver: ['auto', 'svd'] #Reduced the number of solvers
-      max_iter: [1000] #Reduced to one value.
+      alpha: [1.0, 10.0] 
+      solver: ['auto', 'svd'] 
+      max_iter: [1000] 
 
   - model_name: sklearn.ensemble.RandomForestRegressor
     hyperparameters:
-      n_estimators: [50, 100] #Reduced the number of estimators
-      max_depth: [10, 20] #Reduced the range
-      min_samples_split: [2, 10] #Reduced the number of values
-      min_samples_leaf: [1, 4] #Reduced the number of values
+      n_estimators: [50, 100] 
+      max_depth: [10, 20] 
+      min_samples_split: [2, 10] 
+      min_samples_leaf: [1, 4] 
 
   - model_name: sklearn.ensemble.GradientBoostingRegressor
     hyperparameters:
-      n_estimators: [50, 100] #Reduced the number of estimators
-      learning_rate: [0.1, 0.5] #Reduced the range
-      max_depth: [3, 7] #Reduced the range
-      subsample: [1.0] #Reduced to only one value.
+      n_estimators: [50, 100] 
+      learning_rate: [0.1, 0.5] 
+      max_depth: [3, 7] 
+      subsample: [1.0] 
 
   - model_name: xgboost.XGBRegressor
     hyperparameters:
-      n_estimators: [50, 100] #Reduced the number of estimators.
-      learning_rate: [0.1, 0.5] #Reduced the range
-      max_depth: [3, 7] #Reduced the range
-      subsample: [1.0] #Reduced to only one value
+      n_estimators: [50, 100] 
+      learning_rate: [0.1, 0.5] 
+      max_depth: [3, 7] 
+      subsample: [1.0] 

@@ -12,7 +12,7 @@ def main():
         config = Configuration()
         pipeline = Pipeline(config = config)
         pipeline.run()
-        print("Testing pipeline module completed")
+        print("MODEL RUN COMPLETED")
 
     except Exception as e:
         raise vmException(e,sys) from e
