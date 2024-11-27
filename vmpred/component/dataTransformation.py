@@ -2,7 +2,7 @@ from vmpred.exception import vmException
 from vmpred.logger import logging
 from vmpred.entity.configEntity import DataTransformationConfig
 from vmpred.entity.artifactEntity import DataIngestionArtifact, DataValidationArtifact, DataTransformationArtifact
-import sys, os
+import sys, os, io
 import numpy as np
 import pandas as pd
 from vmpred.constant import *
@@ -93,7 +93,11 @@ class DataTransformation:
             status_mapping = {'Weak': 1, 'Good': 2, 'New': 3}
             df['battery_status'] = df['battery_status'].map(status_mapping)
 
-            logging.info(f"New Features Added: \n {df.info()}")
+            buffer = io.StringIO()  # Create a buffer to capture the output
+            df.info(buf=buffer)  # Write the DataFrame info to the buffer
+            info_str = buffer.getvalue()  # Get the string content of the buffer
+
+            logging.info(f"New Features Added: \n {info_str}")
 
             return df
 
