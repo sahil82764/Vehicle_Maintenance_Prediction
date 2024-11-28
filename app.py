@@ -14,6 +14,9 @@ def main():
         pipeline.run()
         print("MODEL RUN COMPLETED")
 
+        # Run the Streamlit app
+        os.system("streamlit run stApp.py")
+
     except Exception as e:
         raise vmException(e,sys) from e
 
