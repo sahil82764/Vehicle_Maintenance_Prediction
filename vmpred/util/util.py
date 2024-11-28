@@ -5,7 +5,7 @@ import sys
 import numpy as np
 import pandas as pd
 from vmpred.constant import *
-import pickle
+import joblib
 
 def read_yaml_file(file_path:str) -> dict:
     """
@@ -44,7 +44,7 @@ def save_object(file_path:str, obj):
         os.makedirs(dir_path, exist_ok=True)
         
         with open(file_path, 'wb') as file_obj:
-            pickle.dump(obj, file_obj)
+            joblib.dump(obj, file_obj)
 
     except Exception as e:
         raise vmException(e,sys) from e
@@ -55,6 +55,6 @@ def load_object(file_path:str):
     """
     try:
         with open(file_path,'rb') as file_obj:
-            return pickle.load(file_obj)
+            return joblib.load(file_obj)
     except Exception as e:
         raise vmException(e,sys) from e
